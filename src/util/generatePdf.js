@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const logger = require('./logger');
 generatePDF = async (html, filePath = null) => {
     try {
       const browser = await puppeteer.launch();

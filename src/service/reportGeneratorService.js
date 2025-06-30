@@ -2,9 +2,10 @@ const axios = require("axios");
 const config = require("../config/config");
 const logger = require("../util/logger");
 const { generatePDF } = require("../util/generatePdf");
+const fs = require("fs");
+const path = require("path");
 
 class ReportGenerator {
-    
   async generateReport(stories, reportType) {
     const summary = this.generateSummary(stories);
     const details = this.generateDetails(stories);
@@ -20,11 +21,18 @@ class ReportGenerator {
 
     const html = this.formatReport(report);
 
+    // Ensure the reports directory exists
+    const reportsDir = path.resolve(__dirname, "../../reports");
+    if (!fs.existsSync(reportsDir)) {
+      fs.mkdirSync(reportsDir, { recursive: true });
+    }
+
     // Generate PDF from HTML
-    const pdfBuffer = await generatePDF(
-      html,
-      "../../reports/sprint-report.pdf"
+    const pdfPath = path.join(
+      reportsDir,
+      `sprint-report-${new Date().getTime().toString()}.pdf`
     );
+    const pdfBuffer = await generatePDF(html, pdfPath);
 
     return {
       subject: `${
@@ -97,7 +105,7 @@ class ReportGenerator {
       );
       const summary = response.data.choices[0]?.content?.trim();
       logger.info();
-      return summary
+      return summary;
     } catch (error) {
       logger.error("Error generating LLM summary:", error.message);
       return "Unable to generate AI summary due to an error. Please check the LLM API configuration.";

@@ -17,7 +17,9 @@ class AIAgent {
     async runReport(reportType = 'weekly') {
         try {
             // Fetch user stories for current sprint
-            const stories = await this.jiraClient.getCurrentSprintStories();
+            // const stories = await this.jiraClient.getCurrentSprintStories();
+
+            const stories = await this.jiraClient.getSprintIssuesByInterval(reportType);
             
             // Generate report
             const report = await this.reportGenerator.generateReport(stories, reportType);
