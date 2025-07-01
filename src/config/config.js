@@ -3,7 +3,8 @@ module.exports = {
         baseUrl: process.env.JIRA_API,
         username: process.env.JIRA_USERNAME,
         apiToken: process.env.JIRA_API_TOKEN,
-        boardId: process.env.JIRA_BOARD_ID
+        boardId: process.env.JIRA_BOARD_ID,
+        storyPointField: process.env.JIRA_STORY_POINT_FIELD
     },
     email: {
         host: process.env.EMAIL_HOST,

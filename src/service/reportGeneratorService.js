@@ -4,12 +4,21 @@ const logger = require("../util/logger");
 const { generatePDF } = require("../util/generatePdf");
 const fs = require("fs");
 const path = require("path");
+const { generateReportHtml } = require("../util/generateReportHtml");
+const { capitalizeFirstLetter } = require("../util/appUtil");
 
 class ReportGenerator {
   async generateReport(stories, reportType) {
     const summary = this.generateSummary(stories);
     const details = this.generateDetails(stories);
-    const llmSummary = await this.generateLLMSummary(stories, reportType);
+    // const llmSummary = await this.generateLLMSummary(stories, reportType);
+    const llmSummary = `The current sprint is progressing with 1 story in QA, 2 in progress, 2 awaiting start, and 1 in
+production, indicating a moderate pace. Notably, none of the stories have assigned points, making it
+challenging to assess the team's velocity or completion rate. Overall, the team's progress appears
+steady, but the lack of point assignments and uneven story distribution across stages may warrant
+attention to optimize sprint performance and better understand potential blockers or areas for
+improvement.`;
+    logger.info(`LLM summay ${llmSummary}`);
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -19,7 +28,7 @@ class ReportGenerator {
       details,
     };
 
-    const html = this.formatReport(report);
+    const html = generateReportHtml(report);
 
     // Ensure the reports directory exists
     const reportsDir = path.resolve(__dirname, "../../reports");
@@ -30,7 +39,7 @@ class ReportGenerator {
     // Generate PDF from HTML
     const pdfPath = path.join(
       reportsDir,
-      `sprint-report-${new Date().getTime().toString()}.pdf`
+      `${capitalizeFirstLetter(reportType)}-sprint-report-${new Date().getTime().toString()}.pdf`
     );
     const pdfBuffer = await generatePDF(html, pdfPath);
 
@@ -67,6 +76,9 @@ class ReportGenerator {
       status: story.status,
       assignee: story.assignee,
       storyPoints: story.storyPoints,
+      priority: story.priority,
+      comments: story?.comments,
+      duedate: story?.duedate
     }));
   }
 
@@ -103,46 +115,14 @@ class ReportGenerator {
           },
         }
       );
-      const summary = response.data.choices[0]?.content?.trim();
-      logger.info();
+      const summary = response.data.choices[0]?.message?.content;
       return summary;
     } catch (error) {
-      logger.error("Error generating LLM summary:", error.message);
+      logger.error("Error generating LLM summary:", error);
       return "Unable to generate AI summary due to an error. Please check the LLM API configuration.";
     }
   }
 
-  formatReport(report) {
-    let html = `<h2>${report.reportType} Sprint Report - ${report.timestamp}</h2>`;
-
-    html += "<h3>AI-Generated Summary</h3>";
-    html += `<p>${report.llmSummary}</p>`;
-
-    html += "<h3>Summary</h3>";
-    html += `<p>Total Stories: ${report.summary.totalStories}</p>`;
-    html += `<p>Total Story Points: ${report.summary.totalPoints}</p>`;
-    html += "<h4>Status Breakdown:</h4><ul>";
-    for (const [status, count] of Object.entries(report.summary.statusCounts)) {
-      html += `<li>${status}: ${count}</li>`;
-    }
-    html += "</ul>";
-
-    html += '<h3>Story Details</h3><table border="1">';
-    html +=
-      "<tr><th>Key</th><th>Summary</th><th>Status</th><th>Assignee</th><th>Points</th></tr>";
-    report.details.forEach((story) => {
-      html += `<tr>
-                <td>${story.key}</td>
-                <td>${story.summary}</td>
-                <td>${story.status}</td>
-                <td>${story.assignee}</td>
-                <td>${story.storyPoints}</td>
-            </tr>`;
-    });
-    html += "</table>";
-
-    return html;
-  }
 }
 
 module.exports = { ReportGenerator };

@@ -8,10 +8,6 @@ const logger = require('./src/util/logger');
 
 class AIAgent {
     constructor() {
-        this.jiraClient = new JiraClient(config.jira);
-        this.reportGenerator = new ReportGenerator();
-        this.emailService = new EmailService(config.email);
-        this.scheduleManager = new ScheduleManager(this.runReport.bind(this));
     }
 
     async runReport(reportType = 'weekly') {
@@ -36,6 +32,10 @@ class AIAgent {
     }
 
     start() {
+        this.jiraClient = new JiraClient(config.jira);
+        this.reportGenerator = new ReportGenerator();
+        this.emailService = new EmailService(config.email);
+        this.scheduleManager = new ScheduleManager(this.runReport.bind(this));
         // Start scheduled reports
         this.scheduleManager.startSchedules();
         logger.info('AI Agent started with scheduled reports');

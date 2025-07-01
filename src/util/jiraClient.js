@@ -80,23 +80,45 @@ async getSprintIssuesByInterval(interval = 'daily') {
     const issuesApiOptions = {
       method: "GET",
       url: `${this.baseUrl}/rest/api/2/search`,
-      params: { jql, maxResults: 100 },
+      params: { jql , expand: "comments"},
       headers: {
         authorization: `Basic ${apiToken}`,
       },
     };
     const issuesResponse = await axios.request(issuesApiOptions);
     logger.info(`Jira issues updated in last ${interval}`, issuesResponse?.data);
-    return issuesResponse.data.issues.map((issue) => ({
-      id: issue.id,
-      key: issue.key,
-      summary: issue.fields.summary,
-      status: issue.fields.status.name,
-      assignee: issue.fields.assignee?.displayName || "Unassigned",
-      storyPoints: issue.fields.customfield_10020 || "Not estimated",
-      sprint: issue.fields.sprint?.name || "No sprint",
-      updated: issue.fields.updated,
-    }));
+
+    const issues = issuesResponse.data.issues;
+
+    const issuesWithComments = await Promise.all(
+      issues.map(async (issue) => {
+        let comments = [];
+        try {
+          const commentsResponse = await axios.get(
+            `${this.baseUrl}/rest/api/2/issue/${issue.key}/comment`,
+            { headers: { authorization: `Basic ${apiToken}` } }
+          );
+          comments = commentsResponse.data.comments;
+        } catch (err) {
+          logger.error(`Error fetching comments for issue ${issue.key}:`, err.message);
+        }
+        return {
+          id: issue.id,
+          key: issue.key,
+          summary: issue.fields.summary,
+          status: issue.fields.status.name,
+          assignee: issue.fields.assignee?.displayName || "Unassigned",
+          storyPoints: issue.fields?.[config.jira.storyPointField] || "Not estimated",
+          sprint: issue.fields.sprint?.name || "No sprint",
+          updated: issue.fields.updated,
+          priority: issue.fields.priority?.name || "Not set",
+          duedate: issue.fields?.duedate || '',
+          comments, // array of comment objects
+        };
+      })
+    );
+
+    return issuesWithComments;
   } catch (error) {
     logger.error("Error fetching Jira issues by interval:", error.message);
     throw error;

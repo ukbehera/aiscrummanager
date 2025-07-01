@@ -14,20 +14,20 @@ class ScheduleManager {
             this.reportCallback('daily');
         });
 
-        // // Weekly report: Every Monday at 9 AM
-        // schedule.scheduleJob(config.app.wsrCrontExpression, () => {
-        //     this.reportCallback('weekly');
-        // });
+        // Weekly report: Every Monday at 9 AM
+        schedule.scheduleJob(config.app.wsrCrontExpression, () => {
+            this.reportCallback('weekly');
+        });
 
-        // // Monthly report: First day of month at 9 AM
-        // schedule.scheduleJob(config.app.msrCronExpression, () => {
-        //     this.reportCallback('monthly');
-        // });
+        // Monthly report: First day of month at 9 AM
+        schedule.scheduleJob(config.app.msrCronExpression, () => {
+            this.reportCallback('monthly');
+        });
 
-        // // Quarterly report: First day of Jan, Apr, Jul, Oct at 9 AM
-        // schedule.scheduleJob(config.app.qsrCronExpression, () => {
-        //     this.reportCallback('quarterly');
-        // });
+        // Quarterly report: First day of Jan, Apr, Jul, Oct at 9 AM
+        schedule.scheduleJob(config.app.qsrCronExpression, () => {
+            this.reportCallback('quarterly');
+        });
     }
 }
 
