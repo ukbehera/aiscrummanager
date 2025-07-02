@@ -40,10 +40,6 @@ Contributions are welcome! Please open issues or submit pull requests for improv
 
 This project is licensed under the MIT License.
 
-## Author
-
-ukbehera
-
 ---
 
 Let me know if you'd like to add more details or sections!
