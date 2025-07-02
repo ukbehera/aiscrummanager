@@ -3,17 +3,18 @@ const logger = require('../util/logger');
 
 class EmailService {
     constructor(config) {
+        this.config = config;
         this.transporter = nodemailer.createTransport({
-            host: config.host,
-            port: config.port,
-            secure: config.secure,
+            host: this.config.email.host,
+            port: this.config.email.port,
+            secure: this.config.email.secure,
             auth: {
-                user: config.user,
-                pass: config.pass
+                user: this.config.email.user,
+                pass: this.config.email.pass
             }
         });
-        this.from = config.from;
-        this.to = config.to;
+        this.from = this.config.email.from;
+        this.to = this.config.email.to;
     }
 
     async sendReportEmail(report, reportType) {

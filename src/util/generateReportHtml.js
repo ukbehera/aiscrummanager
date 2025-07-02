@@ -53,6 +53,11 @@ const generateReportHtml = (report) => {
           th, td {
             padding: 10px 8px;
             text-align: left;
+            vertical-align: top;
+            word-break: break-word;
+            max-width: 300px;      /* Set your preferred max width */
+            max-height: 120px;     /* Set your preferred max height */
+            overflow: auto;        /* Enable scroll if content exceeds max height */
           }
           th {
             background: #e5f1fb;
@@ -66,7 +71,7 @@ const generateReportHtml = (report) => {
         </style>
       </head>
       <body>
-        <h2>${capitalizeFirstLetter(report.reportType)} Sprint Report - ${
+        <h2>${report.project} : ${capitalizeFirstLetter(report.reportType)} Sprint Report - ${
     formatDate(report.timestamp, 'DD-MM-YYYY')
   }</h2>
         <div class="ai-summary">
@@ -97,6 +102,7 @@ const generateReportHtml = (report) => {
             <th>Points</th>
             <th>Due Date</th>
             <th>Comments</th>
+            <th>Comment Summary</th>
           </tr>
           ${report.details
             .map(
@@ -125,6 +131,7 @@ const generateReportHtml = (report) => {
                     : '<div class="no-comments"><b>No comments yet</b></div>'
                 }
               </td>
+              <td>${story.commentSummary}</td>
             </tr>
           `
             )

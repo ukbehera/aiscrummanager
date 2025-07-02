@@ -4,19 +4,15 @@ const config = require("../config/config");
 
 class JiraClient {
   constructor(config) {
-    this.baseUrl = config.baseUrl;
-    this.auth = {
-      username: config.username,
-      password: config.apiToken,
-    };
+    this.config = config;
   }
 
   async getCurrentSprintStories() {
     try {
-      const apiToken = btoa(`${config.jira.username}:${config.jira.apiToken}`);
+      const apiToken = btoa(`${this.config.jira.username}:${this.config.jira.apiToken}`);
       const issueApiOptions = {
         method: "GET",
-        url: `${this.baseUrl}/rest/agile/1.0/board/${config.jira.boardId}/sprint`,
+        url: `${this.config.jira.baseUrl}/rest/agile/1.0/board/${this.config.jira.boardId}/sprint`,
         params: { state: "active" },
         headers: {
           authorization: `Basic ${apiToken}`,
@@ -30,7 +26,7 @@ class JiraClient {
       // Get issues for sprint
       const issuesResponseApiOptions = {
         method: "GET",
-        url: `${this.baseUrl}/rest/agile/1.0/sprint/${activeSprint?.id}/issue`,
+        url: `${this.config.jira.baseUrl}/rest/agile/1.0/sprint/${activeSprint?.id}/issue`,
         headers: {
           authorization: `Basic ${apiToken}`,
         },
@@ -57,7 +53,7 @@ class JiraClient {
  */
 async getSprintIssuesByInterval(interval = 'daily') {
   try {
-    const apiToken = btoa(`${config.jira.username}:${config.jira.apiToken}`);
+    const apiToken = btoa(`${this.config.jira.username}:${this.config.jira.apiToken}`);
     let jqlInterval;
     switch (interval) {
       case 'daily':
@@ -79,7 +75,7 @@ async getSprintIssuesByInterval(interval = 'daily') {
     const jql = `sprint is not EMPTY`;
     const issuesApiOptions = {
       method: "GET",
-      url: `${this.baseUrl}/rest/api/2/search`,
+      url: `${this.config.jira.baseUrl}/rest/api/2/search`,
       params: { jql , expand: "comments"},
       headers: {
         authorization: `Basic ${apiToken}`,
@@ -95,7 +91,7 @@ async getSprintIssuesByInterval(interval = 'daily') {
         let comments = [];
         try {
           const commentsResponse = await axios.get(
-            `${this.baseUrl}/rest/api/2/issue/${issue.key}/comment`,
+            `${this.config.jira.baseUrl}/rest/api/2/issue/${issue.key}/comment`,
             { headers: { authorization: `Basic ${apiToken}` } }
           );
           comments = commentsResponse.data.comments;
@@ -108,7 +104,7 @@ async getSprintIssuesByInterval(interval = 'daily') {
           summary: issue.fields.summary,
           status: issue.fields.status.name,
           assignee: issue.fields.assignee?.displayName || "Unassigned",
-          storyPoints: issue.fields?.[config.jira.storyPointField] || "Not estimated",
+          storyPoints: issue.fields?.[this.config.jira.storyPointField] || "Not estimated",
           sprint: issue.fields.sprint?.name || "No sprint",
           updated: issue.fields.updated,
           priority: issue.fields.priority?.name || "Not set",

@@ -2,9 +2,9 @@ require('dotenv').config();
 const { ReportGenerator } = require('./src/service/reportGeneratorService');
 const { EmailService } = require('./src/service/emailService');
 const { ScheduleManager } = require('./src/util/scheduleManager');
-const config = require('./src/config/config');
 const { JiraClient } = require('./src/util/jiraClient');
 const logger = require('./src/util/logger');
+const { getProjectsConfig } = require('./src/config/config');
 
 class AIAgent {
     constructor() {
@@ -31,14 +31,17 @@ class AIAgent {
         }
     }
 
-    start() {
-        this.jiraClient = new JiraClient(config.jira);
-        this.reportGenerator = new ReportGenerator();
-        this.emailService = new EmailService(config.email);
-        this.scheduleManager = new ScheduleManager(this.runReport.bind(this));
-        // Start scheduled reports
-        this.scheduleManager.startSchedules();
-        logger.info('AI Agent started with scheduled reports');
+    async start() {
+        const projectsConfig = await getProjectsConfig();
+        projectsConfig.forEach((config) => {
+            this.jiraClient = new JiraClient(config);
+            this.reportGenerator = new ReportGenerator(config);
+            this.emailService = new EmailService(config);
+            this.scheduleManager = new ScheduleManager(this.runReport.bind(this), config);
+            // Start scheduled reports
+            this.scheduleManager.startSchedules();
+            logger.info(`AI Agent started with scheduled reports for project: ${config.project}`);
+        });
     }
 }
 
