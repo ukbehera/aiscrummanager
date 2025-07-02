@@ -1,8 +1,9 @@
 const getProjectsConfig = () => {
   return [
     {
-      project: 'Chatbot',
+      project: 'AIScrumManager',
       jira: {
+        projectKey: process.env.JIRA_PROJECT_KEY,
         baseUrl: process.env.JIRA_API,
         username: process.env.JIRA_USERNAME,
         apiToken: process.env.JIRA_API_TOKEN,

@@ -77,9 +77,10 @@ improvement.`;
 
   async generateDetails(stories) {
     return Promise.all(stories.map(async (story) => {
-      const commentSummary = await this.generateCommentsSummaryForStories(
-        story
-      );
+      // const commentSummary = await this.generateCommentsSummaryForStories(
+      //   story
+      // );
+      const commentSummary = `Test Comment Summary`;
       return {
         key: story.key,
         summary: story.summary,

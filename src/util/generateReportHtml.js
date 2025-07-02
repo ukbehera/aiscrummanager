@@ -97,7 +97,6 @@ const generateReportHtml = (report) => {
             <th>Key</th>
             <th>Summary</th>
             <th>Status</th>
-            <th>Priority</th>
             <th>Assignee</th>
             <th>Points</th>
             <th>Due Date</th>
@@ -111,7 +110,6 @@ const generateReportHtml = (report) => {
               <td>${story.key}</td>
               <td>${story.summary}</td>
               <td>${story.status}</td>
-              <td>${story.priority}</td>
               <td>${story.assignee}</td>
               <td>${story.storyPoints}</td>
               <td>

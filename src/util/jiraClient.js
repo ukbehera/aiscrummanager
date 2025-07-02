@@ -72,7 +72,7 @@ async getSprintIssuesByInterval(interval = 'daily') {
         jqlInterval = '-1d';
     }
     // JQL: issues in any sprint, regardless of updated date
-    const jql = `sprint is not EMPTY`;
+    const jql = `project = "${this.config.jira.projectKey}" AND sprint is not EMPTY`;
     const issuesApiOptions = {
       method: "GET",
       url: `${this.config.jira.baseUrl}/rest/api/2/search`,
