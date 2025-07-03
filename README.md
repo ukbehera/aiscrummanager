@@ -1,6 +1,3 @@
-Here's an improved and more readable version of your README.md. It organizes the sections, improves formatting, and adds clarity:
-
----
 
 # aiScrumManager
 
@@ -42,10 +39,6 @@ Contributions are welcome! Please open issues or submit pull requests for improv
 ## License
 
 This project is licensed under the MIT License.
-
-## Author
-
-ukbehera
 
 ---
 
