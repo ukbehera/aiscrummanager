@@ -14,13 +14,13 @@ class ReportGenerator {
     const summary = this.generateSummary(stories);
     const details = await this.generateDetails(stories);
     console.log('details!!!', details);
-    // const llmSummary = await this.generateLLMSummary(stories, reportType);
-    const llmSummary = `The current sprint is progressing with 1 story in QA, 2 in progress, 2 awaiting start, and 1 in
-production, indicating a moderate pace. Notably, none of the stories have assigned points, making it
-challenging to assess the team's velocity or completion rate. Overall, the team's progress appears
-steady, but the lack of point assignments and uneven story distribution across stages may warrant
-attention to optimize sprint performance and better understand potential blockers or areas for
-improvement.`;
+    const llmSummary = await this.generateLLMSummary(stories, reportType);
+//     const llmSummary = `The current sprint is progressing with 1 story in QA, 2 in progress, 2 awaiting start, and 1 in
+// production, indicating a moderate pace. Notably, none of the stories have assigned points, making it
+// challenging to assess the team's velocity or completion rate. Overall, the team's progress appears
+// steady, but the lack of point assignments and uneven story distribution across stages may warrant
+// attention to optimize sprint performance and better understand potential blockers or areas for
+// improvement.`;
     logger.info(`LLM summay ${llmSummary}`);
 
     const report = {
@@ -77,10 +77,10 @@ improvement.`;
 
   async generateDetails(stories) {
     return Promise.all(stories.map(async (story) => {
-      // const commentSummary = await this.generateCommentsSummaryForStories(
-      //   story
-      // );
-      const commentSummary = `Test Comment Summary`;
+      const commentSummary = await this.generateCommentsSummaryForStories(
+        story
+      );
+      // const commentSummary = `Test Comment Summary`;
       return {
         key: story.key,
         summary: story.summary,
