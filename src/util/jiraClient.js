@@ -32,7 +32,7 @@ class JiraClient {
         },
       };
       const issuesResponse = await axios.request(issuesResponseApiOptions);
-      logger.info("Resp from Jira", issuesResponse?.data);
+      // logger.info("Resp from Jira", issuesResponse?.data);
       return issuesResponse.data.issues.map((issue) => ({
         id: issue.id,
         key: issue.key,
@@ -85,7 +85,7 @@ async getSprintIssuesByInterval(interval = 'daily') {
       },
     };
     const issuesResponse = await axios.request(issuesApiOptions);
-    logger.info(`Jira issues updated in last ${interval}`, issuesResponse?.data);
+    // logger.info(`Jira issues updated in last ${interval}`, issuesResponse?.data);
 
     const issues = issuesResponse.data.issues;
 

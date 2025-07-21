@@ -12,9 +12,8 @@ class ReportGenerator {
   }
   async generateReport(stories, reportType) {
     const summary = this.generateSummary(stories);
-    const details = await this.generateDetails(stories);
-    console.log('details!!!', details);
     const llmSummary = await this.generateLLMSummary(stories, reportType);
+    const details = await this.generateDetails(stories);
 //     const llmSummary = `The current sprint is progressing with 1 story in QA, 2 in progress, 2 awaiting start, and 1 in
 // production, indicating a moderate pace. Notably, none of the stories have assigned points, making it
 // challenging to assess the team's velocity or completion rate. Overall, the team's progress appears
